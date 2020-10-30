@@ -1,6 +1,6 @@
-import unittest
-import numpy as np
 from math import floor
+import numpy as np
+import unittest
 
 from convolution import convolve, add_padding
 
@@ -18,7 +18,7 @@ class TestConvolution(unittest.TestCase):
             self.assertEqual(random_data_with_padding.shape, (m_h + rows*2, m_w + cols*2))
 
 
-    def test_random_case(self, N: int = 100):
+    def test_random_case(self, N: int = 1000):
         for _ in range(N): 
             d = np.random.randint(1, 100, 2)
             k = np.random.choice([1, 3, 5, 7, 9, 10], 2) # `10` is to check oddness assertion
@@ -117,6 +117,7 @@ class TestConvolution(unittest.TestCase):
         self.assertEqual(result_211.tolist(), answer_211.tolist())
         self.assertEqual(result_220.tolist(), answer_220.tolist())
         self.assertEqual(result_221.tolist(), answer_221.tolist())
+
 
     def test_kernel_7x7(self):
         pass
