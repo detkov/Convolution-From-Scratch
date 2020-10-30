@@ -1,5 +1,7 @@
 import unittest
 import numpy as np
+from math import floor
+
 from convolution import convolve, add_padding
 
 
@@ -15,35 +17,44 @@ class TestConvolution(unittest.TestCase):
             
             self.assertEqual(random_data_with_padding.shape, (m_h + rows*2, m_w + cols*2))
 
-    def test_random_case(self, N: int = 100):
-        for _ in range(N):
-            d = np.random.randint(3, 50, 2)
-            k = np.random.choice([3])#, 5, 7, 9])
-            random_data = np.random.rand(*d)
-            random_kernel = np.random.rand(k, k)
-            for __ in range(N):
-                stride = np.random.randint(1, 5, 2)
-                dilation = np.random.randint(1, 5, 2)
-                padding = tuple(np.random.randint(0, 5, 2))
 
-                h_out = int((d[0] + 2 * padding[0] - k - (k - 1) * (dilation[0] - 1)) / stride[0]) + 1
-                w_out = int((d[1] + 2 * padding[1] - k - (k - 1) * (dilation[1] - 1)) / stride[1]) + 1
-                # print(d, k, stride, dilation, padding) 
-                if d[0] < k or d[1] < k:
+    def test_random_case(self, N: int = 100):
+        for _ in range(N): 
+            d = np.random.randint(1, 100, 2)
+            k = np.random.choice([1, 3, 5, 7, 9, 10], 2) # `10` is to check oddness assertion
+            random_data = np.random.rand(*d)
+            random_kernel = np.random.rand(*k)
+            for __ in range(N):
+                stride = np.random.randint(0, 5, 2) # `0` is to check parameters assertion
+                dilation = np.random.randint(0, 5, 2) # `0` is to check parameters assertion
+                padding = np.random.randint(-1, 5, 2) # `-1` is to check parameters assertion
+                try: # `try` in case of division by zero when stride[0] or stride[1] equal to zero
+                    h_out = floor((d[0] + 2 * padding[0] - k[0] - (k[0] - 1) * (dilation[0] - 1)) / stride[0]) + 1
+                    w_out = floor((d[1] + 2 * padding[1] - k[1] - (k[1] - 1) * (dilation[1] - 1)) / stride[1]) + 1
+                except:
+                    h_out, w_out = None, None
+                # print(f'Data: {d} | Kern: {k} | Stri: {stride} | Dila: {dilation} | Padd: {padding} | OutD: {h_out, w_out}') # for debugging
+                
+                if (stride[0] < 1 or stride[1] < 1 or dilation[0] < 1 or dilation[1] < 1 or padding[0] < 0 or padding[1] < 0 or
+                    not isinstance(stride[0], int) or not isinstance(stride[1], int) or not isinstance(dilation[0], int) or 
+                    not isinstance(dilation[1], int) or not isinstance(padding[0], int) or not isinstance(padding[1], int)):
+                    with self.assertRaises(AssertionError):
+                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                elif k[0] % 2 != 1 or k[1] % 2 != 1:
+                    with self.assertRaises(AssertionError):
+                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                elif d[0] < k[0] or d[1] < k[1]:
                     with self.assertRaises(AssertionError):
                         data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
                 elif h_out <= 0 or w_out <= 0:
                     with self.assertRaises(AssertionError):
                         data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
                 else:
-                    try:
-                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
-                        self.assertEqual(data_conved.shape, (h_out, w_out))
-                    except AssertionError: # for non-applicable params
-                        with self.assertRaises(AssertionError):
-                            data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                    data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                    self.assertEqual(data_conved.shape, (h_out, w_out))
 
-    def test_regular_params(self):
+
+    def test_kernel_3x3(self):
         data = np.array([[0, 4, 3, 2, 0, 1, 0], 
                          [4, 3, 0, 1, 0, 1, 0],
                          [1, 3, 4, 2, 0, 1, 0],
@@ -106,6 +117,10 @@ class TestConvolution(unittest.TestCase):
         self.assertEqual(result_211.tolist(), answer_211.tolist())
         self.assertEqual(result_220.tolist(), answer_220.tolist())
         self.assertEqual(result_221.tolist(), answer_221.tolist())
+
+    def test_kernel_7x7(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()
