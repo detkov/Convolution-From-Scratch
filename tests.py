@@ -10,19 +10,19 @@ class TestConvolution(unittest.TestCase):
         for _ in range(N):
             m_h = np.random.randint(3, 100)
             m_w = np.random.randint(3, 100)
-            random_data = np.random.rand(m_h, m_w)
+            random_matrix = np.random.rand(m_h, m_w)
 
             rows, cols = np.random.randint(0, 100, 2)
-            random_data_with_padding = add_padding(random_data, (rows, cols))
+            random_matrix_with_padding = add_padding(random_matrix, (rows, cols))
             
-            self.assertEqual(random_data_with_padding.shape, (m_h + rows*2, m_w + cols*2))
+            self.assertEqual(random_matrix_with_padding.shape, (m_h + rows*2, m_w + cols*2))
 
 
     def test_random_case(self, N: int = 1000):
         for _ in range(N): 
             d = np.random.randint(1, 100, 2)
             k = np.random.choice([1, 3, 5, 7, 9, 10], 2) # `10` is to check oddness assertion
-            random_data = np.random.rand(*d)
+            random_matrix = np.random.rand(*d)
             random_kernel = np.random.rand(*k)
             for __ in range(N):
                 stride = np.random.randint(0, 5, 2) # `0` is to check parameters assertion
@@ -33,25 +33,25 @@ class TestConvolution(unittest.TestCase):
                     w_out = floor((d[1] + 2 * padding[1] - k[1] - (k[1] - 1) * (dilation[1] - 1)) / stride[1]) + 1
                 except:
                     h_out, w_out = None, None
-                # print(f'Data: {d} | Kern: {k} | Stri: {stride} | Dila: {dilation} | Padd: {padding} | OutD: {h_out, w_out}') # for debugging
+                # print(f'Matr: {d} | Kern: {k} | Stri: {stride} | Dila: {dilation} | Padd: {padding} | OutD: {h_out, w_out}') # for debugging
                 
                 if (stride[0] < 1 or stride[1] < 1 or dilation[0] < 1 or dilation[1] < 1 or padding[0] < 0 or padding[1] < 0 or
                     not isinstance(stride[0], int) or not isinstance(stride[1], int) or not isinstance(dilation[0], int) or 
                     not isinstance(dilation[1], int) or not isinstance(padding[0], int) or not isinstance(padding[1], int)):
                     with self.assertRaises(AssertionError):
-                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                        matrix_conved = convolve(random_matrix, random_kernel, stride=stride, dilation=dilation, padding=padding)
                 elif k[0] % 2 != 1 or k[1] % 2 != 1:
                     with self.assertRaises(AssertionError):
-                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                        matrix_conved = convolve(random_matrix, random_kernel, stride=stride, dilation=dilation, padding=padding)
                 elif d[0] < k[0] or d[1] < k[1]:
                     with self.assertRaises(AssertionError):
-                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                        matrix_conved = convolve(random_matrix, random_kernel, stride=stride, dilation=dilation, padding=padding)
                 elif h_out <= 0 or w_out <= 0:
                     with self.assertRaises(AssertionError):
-                        data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                        matrix_conved = convolve(random_matrix, random_kernel, stride=stride, dilation=dilation, padding=padding)
                 else:
-                    data_conved = convolve(random_data, random_kernel, stride=stride, dilation=dilation, padding=padding)
-                    self.assertEqual(data_conved.shape, (h_out, w_out))
+                    matrix_conved = convolve(random_matrix, random_kernel, stride=stride, dilation=dilation, padding=padding)
+                    self.assertEqual(matrix_conved.shape, (h_out, w_out))
 
 
     def test_kernel_3x3_easy(self):
