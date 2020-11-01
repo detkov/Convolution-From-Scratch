@@ -1,27 +1,41 @@
 # Convolution from scratch  
 ![Finally some good convolution with dilation in pure Python and NumPy](files/4kjdms.jpg)  
+
 ### Motivation on repository
-I tried to find the algorithm of convolution with dilation, implemented from scratch on a pure python, but could not find anything. There are a lot of self-written CNN on the Internet and on the Github and so on, a lot of tutorials and explanations on convolutions, but there is a lack of a very important thing: proper implementation of a generalized 2D convolution for a kernel of any form with adjustable on both axes such parameters as stride, padding, and most importantly, dilation.The last one cannot be found anywhere. This is why this repository and this picture above appeared.
+I tried to find the algorithm of convolution with dilation, implemented from scratch on a pure python, but could not find anything. There are a lot of self-written CNNs on the Internet and on the Github and so on, a lot of tutorials and explanations on convolutions, but there is a lack of a very important thing: proper implementation of a generalized 2D convolution for a kernel of any form with adjustable on both axes parameters, such as stride, padding, and most importantly, dilation. The last one cannot be found literally anywhere! This is why this repository and this picture above appeared.
+
 ### Who needs this?
 If you've ever wanted to understand how this seemingly simple algorithm can be really implemented in code, this repository is for you. As it turns out, it's not so easy to tie all the parameters together in code to make it clear and obvious (and optimal in terms of computations).  
 Feel free to use it as you wish.
-<!-- ## Explanation
-Idea in the nutshell: in 2D convolution we move some small matrix called Kernel over 2D image (some matrix) and multiply it element-wise over each sub-matrix, then summing elements of obtained sub-matrix into a single pixel of so-called "feature map". Just like in the GIF [(source)](https://stackoverflow.com/questions/42450389/how-a-filter-in-convolutional-neural-network-can-generate-multiple-channels) below:
+
+## Explanation
+### Idea in the nutshell
+In 2D convolution we move some small matrix called <i>Kernel</i> over 2D <i>Image</i> (some matrix) and multiply it element-wise over each sub-matrix, then sum elements of obtained sub-matrix into a single pixel of so-called <i>Feature map</i>. We move it from the left to the right and from the top to the bottom. At the end of convolution we usually cover the whole <i>Image</i> surface, but that is not garanteed with more complex parameters.  
+This GIF [(source)](https://stackoverflow.com/questions/42450389/how-a-filter-in-convolutional-neural-network-can-generate-multiple-channels) below perfectly presents the essence of the 2D convolution: green matrix is the <i>Image</i>, yellow is the <i>Kernel</i> and <s>red</s> coral is the <i>Feature map</i>:
 
 ![*Some clarifying GIF*](files/conv.gif)  
 
-First of all, let's clarify it and give a definition to every term used:
-- Input data or Image is some matrix;
-- Kernel is a small matrix that we multiply with sub-matrices of an image;
-- Stride is the size of the step of the slide. So when the stride equals 1, we move 1 pixel to the right on every step, when 2, we move 2 pixels and so on;
-- Padding is -->
+Let's clarify it and give a definition to every term used:
+- <b>Image</b> or input data is some matrix;
+- <b>Kernel</b> is a small matrix that we multiply with sub-matrices of an Image;
+    - <b>Stride</b> is the size of the step of the slide. For example, when the stride equals 1, we move on 1 pixel on every step, when 2, then we move on 2 pixels and so on. [This picture](files/expl_stride.png) can help you figure it out;
+    - <b>Padding</b> is just the border of the <i>Image</i> that allows us to keep size of initial <i>Image</i> and <i>Feature map</i> the same. In the GIF above we see that the shape of <i>Image</i> is 5x5 but the <i>Feature map</i> is 3x3. The reason is that when we use <i>Kernel</i>, we can't put it's center in the corner, because if we do, there is a lack of pixels to multiply on. So if we want to keep shape, we use padding and add some zero border of the image. [This GIF](files/expl_padding.gif) can help you figure it out;
+    - <b>Dilation</b> is just the gap between kernel cells. So, the regular dilation is 1 and each cell is not distanced from it's neighbor, but when we set value as 2, there is no cells in 1-cell Neighborhood — now they are distanced from each other. [This picture](files/expl_dilation.png) can help you figure it out.   
+- <b>Feature map</b> or output data is the matrix obtained by all the calculations discussed earlier.
+
+This is it — that easy.
+<!-- ### What is actually under the hood -->
+
+
 ## Usage 
-<!-- ###  -->
-### Example of usage in daily life situations
+### Example of usage in not a daily life situation
+
+### Example of usage in daily life situation
 For example, if you want to blur your image, you can use [Gaussian blur](https://en.wikipedia.org/wiki/Gaussian_blur) and take corresponding kernel, while some others can be found [here](https://en.wikipedia.org/wiki/Kernel_(image_processing)).
 ```python
-import numpy as np
 import imageio
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 gaussian_blur = np.array([
@@ -32,16 +46,33 @@ gaussian_blur = np.array([
 
 
 image = imageio.imread('files/pic.jpg')
-plt.imshow(image, aspect='auto')
+plt.imshow(image)
 ```
 ![*Some extremely beautiful picture*](files/pic.jpg)
 
-Then you need just to use function `apply_filter_to_image` from `convolution.py` module:
+Then you just need to use `apply_filter_to_image` function from `convolution.py` module.  
+I'm going to make this picture blurry:
 ```python
 filtered_image = apply_filter_to_image(image, gaussian_blur)
-plt.imshow(filtered_image, aspect='auto')
+plt.imshow(filtered_image)
 ```
 ![*Some extremely beautiful blurred picture*](files/pic_blurred.jpg)
 
-> P.S. This photo is taken near the alpine lake Bachalpsee in Switzerland. Photo is under free license.
+Tadaa, it's blurred!
 
+> P.S. This photo is taken near the alpine lake Bachalpsee in Switzerland. Photo is under free license.  
+
+#### Citation
+If you used this reposotory in your work, consider citing:  
+```
+@misc{Convolution from scratch,
+    author = {Detkov, Nikita},
+    title = {Implementation of generalized convolutiuon with dilation from scratch in Python and Numpy},
+    year = {2020},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/detkov/Convolution-From-Scratch}},
+}
+```
+
+Thanks [Matthew Romanishin](https://github.com/matthewromanishin) for the project idea.
