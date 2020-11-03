@@ -1,11 +1,11 @@
 # Convolution from scratch  
-![Finally some good convolution with dilation in pure Python and NumPy](files/4kjdms.jpg)  
+![Finally some good convolution with dilation in pure Python and NumPy](files/meme.jpg)  
 
 ### Motivation on repository
 I tried to find the algorithm of convolution with dilation, implemented from scratch on a pure python, but could not find anything. There are a lot of self-written CNNs on the Internet and on the Github and so on, a lot of tutorials and explanations on convolutions, but there is a lack of a very important thing: proper implementation of a generalized 2D convolution for a kernel of any form with adjustable on both axes parameters, such as stride, padding, and most importantly, dilation. The last one cannot be found literally anywhere! This is why this repository and this picture above appeared.
 
 ### Who needs this?
-If you've ever wanted to understand how this seemingly simple algorithm can be really implemented in code, this repository is for you. As it turns out, it's not so easy to tie all the parameters together in code to make it clear and obvious (and optimal in terms of computations).  
+If you've ever wanted to understand how this seemingly simple algorithm can be really implemented in code, this repository is for you. As it turns out, it's not so easy to tie all the parameters together in code to make it general, clear and obvious (and optimal in terms of computations).  
 Feel free to use it as you wish.
 
 ## Explanation
@@ -20,7 +20,7 @@ Let's clarify it and give a definition to every term used:
 - <b>Kernel</b> is a small matrix that we multiply with sub-matrices of an Image;
     - <b>Stride</b> is the size of the step of the slide. For example, when the stride equals 1, we move on 1 pixel on every step, when 2, then we move on 2 pixels and so on. [This picture](files/expl_stride.png) can help you figure it out;
     - <b>Padding</b> is just the border of the <i>Image</i> that allows us to keep size of initial <i>Image</i> and <i>Feature map</i> the same. In the GIF above we see that the shape of <i>Image</i> is 5x5 but the <i>Feature map</i> is 3x3. The reason is that when we use <i>Kernel</i>, we can't put it's center in the corner, because if we do, there is a lack of pixels to multiply on. So if we want to keep shape, we use padding and add some zero border of the image. [This GIF](files/expl_padding.gif) can help you figure it out;
-    - <b>Dilation</b> is just the gap between kernel cells. So, the regular dilation is 1 and each cell is not distanced from it's neighbor, but when we set value as 2, there is no cells in 1-cell Neighborhood — now they are distanced from each other. [This picture](files/expl_dilation.png) can help you figure it out.   
+    - <b>Dilation</b> is just the gap between kernel cells. So, the regular dilation is 1 and each cell is not distanced from it's neighbor, but when we set value as 2, there is no cells in 1-cell neighborhood — now they are distanced from each other. [This picture](files/expl_dilation.png) can help you figure it out.   
 - <b>Feature map</b> or output data is the matrix obtained by all the calculations discussed earlier.
 
 This is it — that easy.
@@ -28,7 +28,7 @@ This is it — that easy.
 
 
 ## Usage 
-### Example of usage in not a daily life situation
+<!-- ### Example of usage in not a daily life situation -->
 
 ### Example of usage in daily life situation
 For example, if you want to blur your image, you can use [Gaussian blur](https://en.wikipedia.org/wiki/Gaussian_blur) and take corresponding kernel, while some others can be found [here](https://en.wikipedia.org/wiki/Kernel_(image_processing)).
@@ -61,6 +61,11 @@ plt.imshow(filtered_image)
 Tadaa, it's blurred!
 
 > P.S. This photo is taken near the alpine lake Bachalpsee in Switzerland. Photo is under free license.  
+
+### Running tests
+```bash
+python -m unittest tests.py
+```
 
 #### Citation
 If you used this reposotory in your work, consider citing:  

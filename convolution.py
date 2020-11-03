@@ -1,17 +1,25 @@
-from math import floor
 import numpy as np
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 
-def add_padding(matrix: List[List[float]], 
-                padding: Tuple[int, int]) -> List[List[float]]:    
+def add_padding(matrix: np.ndarray, 
+                padding: Tuple[int, int]) -> np.ndarray:
+    """Adds padding to the matrix. 
+
+    Args:
+        matrix (np.ndarray): Matrix that needs to be padded. Type is List[List[float]] casted to np.ndarray.
+        padding (Tuple[int, int]): Tuple with number of rows and columns to be padded. With the `(r, c)` padding we addding `r` rows to the top and bottom and `c` columns to the left and to the right of the matrix
+
+    Returns:
+        np.ndarray: Padded matrix with shape `n + 2 * r, m + 2 * c`.
+    """
     n, m = matrix.shape
-    add_rows, add_cols = padding
+    r, c = padding
     
-    matrix_with_padding = np.zeros((n + add_rows * 2, m + add_cols * 2))
-    matrix_with_padding[add_rows : n + add_rows, add_cols : m + add_cols] = matrix
+    padded_matrix = np.zeros((n + r * 2, m + c * 2))
+    padded_matrix[r : n + r, c : m + c] = matrix
     
-    return matrix_with_padding
+    return padded_matrix
 
 
 def _check_params(matrix, kernel, stride, dilation, padding):
@@ -37,18 +45,31 @@ def _check_params(matrix, kernel, stride, dilation, padding):
     matrix_to_kernel_is_correct = n_p >= k[0] and m_p >= k[1]
     assert matrix_to_kernel_is_correct, 'Kernel can\'t be bigger than matrix in terms of shape.'
     
-    h_out = floor((n + 2 * padding[0] - k[0] - (k[0] - 1) * (dilation[0] - 1)) / stride[0]) + 1
-    w_out = floor((m + 2 * padding[1] - k[1] - (k[1] - 1) * (dilation[1] - 1)) / stride[1]) + 1
+    h_out = np.floor((n + 2 * padding[0] - k[0] - (k[0] - 1) * (dilation[0] - 1)) / stride[0]).astype(int) + 1
+    w_out = np.floor((m + 2 * padding[1] - k[1] - (k[1] - 1) * (dilation[1] - 1)) / stride[1]).astype(int) + 1
     out_dimensions_are_correct = h_out > 0 and w_out > 0
     assert out_dimensions_are_correct, 'Can\'t apply input parameters, one of resulting output dimension is non-positive.'
 
     return matrix, kernel, k, h_out, w_out
 
 
-def convolve(matrix: List[List[float]], kernel: List[List[float]], 
+def conv2d(matrix: Union[List[List[float]], np.ndarray], 
+             kernel: Union[List[List[float]], np.ndarray], 
              stride: Tuple[int, int] = (1, 1), 
              dilation: Tuple[int, int] = (1, 1), 
-             padding: Tuple[int, int] = (0, 0)) -> List[List[float]]:
+             padding: Tuple[int, int] = (0, 0)) -> np.ndarray:
+    """Makes a 2D convolution with the kernel over matrix using defined stride, dilation and padding along axes.
+
+    Args:
+        matrix (Union[List[List[float]], np.ndarray]): 2D matrix to be convolved.
+        kernel (Union[List[List[float]], np.ndarray]): 2D odd-shaped matrix (e.g. 3x3, 5x5, 13x9, etc.).
+        stride (Tuple[int, int], optional): Tuple of the stride along axes. With the `(r, c)` stride we move on `r` pixels along rows and on `c` pixels along columns on each iteration. Defaults to (1, 1).
+        dilation (Tuple[int, int], optional): Tuple of the dilation along axes. With the `(r, c)` dilation we distancing adjacent pixels in kernel by `r` along rows and `c` along columns. Defaults to (1, 1).
+        padding (Tuple[int, int], optional): Tuple with number of rows and columns to be padded. Defaults to (0, 0).
+
+    Returns:
+        np.ndarray: 2D Feature map, i.e. matrix after convolution.
+    """
     matrix, kernel, k, h_out, w_out = _check_params(matrix, kernel, stride, dilation, padding)
     matrix_out = np.zeros((h_out, w_out))
     
@@ -71,7 +92,16 @@ def convolve(matrix: List[List[float]], kernel: List[List[float]],
 
 def apply_filter_to_image(image: np.ndarray, 
                           kernel: List[List[float]]) -> np.ndarray:
+    """Applies filter to the given image.
+
+    Args:
+        image (np.ndarray): 3D matrix to be convolved. Shape must be in HWC format.
+        kernel (List[List[float]]): 2D odd-shaped matrix (e.g. 3x3, 5x5, 13x9, etc.).
+
+    Returns:
+        np.ndarray: image after applying kernel.
+    """
     kernel = np.asarray(kernel)
     b = kernel.shape
-    return np.dstack([convolve(image[:, :, z], kernel, padding=(b[0]//2,  b[1]//2)) 
+    return np.dstack([conv2d(image[:, :, z], kernel, padding=(b[0]//2,  b[1]//2)) 
                       for z in range(3)]).astype('uint8')
