@@ -8,12 +8,21 @@ I tried to find the algorithm of convolution with dilation, implemented from scr
 If you've ever wanted to understand how this seemingly simple algorithm can be really implemented in code, this repository is for you. As it turns out, it's not so easy to tie all the parameters together in code to make it general, clear and obvious (and optimal in terms of computations).  
 Feel free to use it as you wish.
 
+# Contents
+* [Explanation](##-Explanation)
+    * [Idea in the nutshell](###Idea-in-the-nutshell)
+    * Details on implementation (soon)
+* [Usage](##Usage)
+    * [Example with your matrix and kernel](###Example-of-usage-in-a-daily-life-situation)
+    * [Example with your picture and filter](###Example-of-usage-in-a-less-daily-life-situation-than-in-the-previous-one)
+* [Running tests](###-Running-tests)
+* [Citation](####Citation)
 ## Explanation
 ### Idea in the nutshell
 In 2D convolution we move some small matrix called <i>Kernel</i> over 2D <i>Image</i> (some matrix) and multiply it element-wise over each sub-matrix, then sum elements of the obtained sub-matrix into a single pixel of so-called <i>Feature map</i>. We move it from the left to the right and from the top to the bottom. At the end of convolution we usually cover the whole <i>Image</i> surface, but that is not guaranteed with more complex parameters.  
 This GIF [(source)](https://stackoverflow.com/questions/42450389/how-a-filter-in-convolutional-neural-network-can-generate-multiple-channels) below perfectly presents the essence of the 2D convolution: green matrix is the <i>Image</i>, yellow is the <i>Kernel</i> and <s>red</s> coral is the <i>Feature map</i>:
  
-![*Some clarifying GIF*](files/conv.gif)  
+![*Some clarifying GIF*](files/conv.gif)
 
 Let's clarify it and give a definition to every term used:
 - <b>Image</b> or input data is some matrix;
@@ -24,8 +33,7 @@ Let's clarify it and give a definition to every term used:
 - <b>Feature map</b> or output data is the matrix obtained by all the calculations discussed earlier.
 
 This is it — that easy.
-### What is actually under the hood
-
+<!-- ### Details on implementation -->
 
 ## Usage 
 ### Example of usage in a daily life situation
