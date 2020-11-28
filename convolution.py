@@ -84,9 +84,8 @@ def conv2d(matrix: Union[List[List[float]], np.ndarray],
             indices_y = [center_y + l * dilation[1] for l in range(-b[1], b[1] + 1)]
 
             submatrix = matrix[indices_x, :][:, indices_y]
-            prod = np.multiply(submatrix, kernel)
 
-            matrix_out[i][j] = np.sum(prod)
+            matrix_out[i][j] = np.sum(np.multiply(submatrix, kernel))
     return matrix_out
 
 

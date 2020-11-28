@@ -103,7 +103,7 @@ plt.imshow(filtered_image)
 
 Tadaa, it's blurred!
 
-> P.S. This photo is taken near the alpine lake Bachalpsee in Switzerland. Photo is under free license.  
+> P.S. This photo is taken near the alpine lake Bachalpsee in Switzerland ([credits](https://unsplash.com/photos/z_f2JrBRbOg)).  
 
 ### Running tests
 ```bash
@@ -115,7 +115,7 @@ If you used this repository in your work, consider citing:
 ```
 @misc{Convolution from scratch,
     author = {Detkov, Nikita},
-    title = {Implementation of the generalized convolution with dilation from scratch in Python and NumPy},
+    title = {Implementation of the generalized 2D convolution with dilation from scratch in Python and NumPy},
     year = {2020},
     publisher = {GitHub},
     journal = {GitHub repository},

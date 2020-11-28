@@ -42,17 +42,17 @@ kernel = np.array([[0, 1, 3, 3, 2],
 kernel.shape
 
 
-# In[6]:
+# In[4]:
 
 
 fig = plt.figure(figsize=(14, 21))
 gs = gridspec.GridSpec(9, 21, figure=fig)
 
 ax1 = fig.add_subplot(gs[:, :14])
-ax1.set_title('Random matrix')
+ax1.set_title('Matrix')
 ax1.tick_params(left=False, bottom=False)
 ax2 = fig.add_subplot(gs[:, 16:])
-ax2.set_title('Random kernel')
+ax2.set_title('Kernel')
 ax2.tick_params(left=False, bottom=False)
 
 sns.heatmap(matrix, cbar=False, annot=True, square=True, cmap='Blues', vmin=-4, ax=ax1)
@@ -133,5 +133,3 @@ for j_i, j in enumerate([0, 2, 4]):
 
 os.system(f'ffmpeg -hide_banner -loglevel warning -pattern_type glob -r 1 -i "files/plot_convolution_process_*.jpg" files/convolution_process.gif')
 os.system('rm -rf files/plot_convolution_process_*')
-
-
